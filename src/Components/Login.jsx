@@ -1,85 +1,140 @@
 import React from 'react'
-import "./Login.css"
+import styled from 'styled-components'
+import book1 from "../assets/undraw_road_to_knowledge_m8s0.svg"
+import axios from "axios";
+import GoogleAuth from "./Google";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+const Register  = styled.div`
+width: 100vw;
+height: 100vh;
+background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5fbfd;
+`
+const Wrapper = styled.div`
+display: flex;
+width:80%;
+height: 80%;
 
-const Login = () => {
+`
+const Title = styled.h1`
+font-weight:300;
+`
+
+const Left = styled.div`
+flex: 1;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+
+`
+
+const Right = styled.div`
+flex: 1;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: start;
+gap: 20px;
+margin-top: 50px;
+`
+const Input = styled.input`
+border: 1px solid gray;
+outline: none;
+padding: 10px;
+`
+
+const Submit = styled.button`
+border: none;
+background-color:#6d99ef;
+color: white;
+padding: 15px;
+`
+
+const Send = styled.button`
+border: none;
+background-color:#6d99ef;
+color: white;
+padding: 15px;
+`
+
+const Hr = styled.hr`
+width: 100%;
+
+
+`
+const Img = styled.img`
+height: 200px;
+width: 400px;
+z-index: 9999;
+`
+
+const register = () => {
+  const navigate = useNavigate();
+  
+  if(localStorage.token){
+    console.log("token already exists")
+    setTimeout(()=>{
+      navigate("/cart")
+    }, 200)
+  };
+  
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+
+  const submit = ()=>{
+    const otpToken = localStorage.getItem("otpToken");
+    axios.post("http://localhost:8081/auth/login", {
+      email: email,
+      password: password,
+    }).then((result)=>{
+      console.log({result});
+      localStorage.setItem("token", result.data.token);
+      if(localStorage.token){
+        console.log("token already exists")
+        setTimeout(()=>{
+          navigate("/cart")
+        }, 200)
+      };
+    })
+  };
+
   return (
     <div>
-<div className="main-frame">
-      <div className="frame-21">
-        <div className="image"></div>
+      <Register>
+        <Wrapper>
+            <Left>
+            <Img src={book1}/>
+            </Left>
+            <Right>
+            <GoogleAuth/>
+or
+            <Title>
+                LOgin
 
-        <div className="login">
-          <div className="frame-11">
-            <div className="logo">
-              <div className="series">SERIES</div>
-            </div>
+             </Title>
+            <Input
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
 
-            <div className="greetings">
-              <div className="frame-17">
-                <div className="hey-welcome-here">HEY, WELCOME HERE!</div>
-
-                <div className="login-to-experience-our-services">
-                  Login to experience our services
-                </div>
-              </div>
-            </div>
-
-            <div className="email">
-              <div className="frame-112">
-                <div className="frame-15">
-                  {/* <div className="enter-phone-number">Enter Phone Number</div> */}
-
-                  <input className="rectangle-1" placeholder='Phone Number'></input>
-                </div>
-              </div>
-            </div>
-
-            <div className="password">
-              <div className="frame-10">
-                <div className="frame-152">
-                  <div className="otp">OTP</div>
-
-                  <input className="rectangle-2" placeholder='OTP' disabled={true}></input>
-                </div>
-              </div>
-            </div>
-
-            <div className="remember-me">
-              <div className="frame-9">
-                <div className="frame-13">
-                  <div className="frame-16">
-                    <div className="frame-18">
-                      <div className="send-otp">Send OTP</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="or-line">
-              <div className="frame-20">
-                <div className="line-1"></div>
-
-                <div className="or">or</div>
-
-                <div className="line-2"></div>
-              </div>
-            </div>
-
-            <div className="google">
-              <div className="frame-19">
-                <div className="google-authentication">
-                  Google Authentication
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+            <Input
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+                <Submit onClick={submit}>Submit</Submit>
+            </Right>
+        </Wrapper>
+      </Register>
     </div>
-
-</div>
   )
 }
 
-export default Login
+export default register
+

@@ -1,7 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
 import book1 from "../assets/undraw_road_to_knowledge_m8s0.svg"
-
+import axios from "axios";
+import GoogleAuth from "./Google";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 const Register  = styled.div`
 width: 100vw;
 height: 100vh;
@@ -70,10 +73,47 @@ width: 400px;
 z-index: 9999;
 `
 
-
 const register = () => {
+  const navigate = useNavigate();
+  
+  if(localStorage.token){
+    console.log("token already exists")
+    setTimeout(()=>{
+      navigate("/cart")
+    }, 200)
+  };
+  
+  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
+  const [phone, setPhone] = useState("")
+  const [otp, setOtp] = useState("")
+  const [password, setPassword] = useState("")
+  const [status, setStatus] = useState(false)
 
-    const OTP = true;
+  const otpSent = () => {
+    axios.post("http://localhost:8081/api/send-otp", {
+      phone: phone,
+    }).then((result)=>{
+      console.log(result.data);
+      localStorage.setItem("otpToken", result.data.token);
+      setStatus(true);
+    })
+  };
+
+  const submit = ()=>{
+    const otpToken = localStorage.getItem("otpToken");
+    axios.post("http://localhost:8081/auth/register", {
+      username: username,
+      email: email,
+      password: password,
+      contactNumber: phone,
+      otp: otp,
+      otpToken: otpToken,
+    }).then((result)=>{
+      console.log({result})
+    })
+  };
+
   return (
     <div>
       <Register>
@@ -82,19 +122,42 @@ const register = () => {
             <Img src={book1}/>
             </Left>
             <Right>
+            <GoogleAuth/>
+or
             <Title>
                 Register
+
              </Title>
-                <Input placeholder="Username"/>
-                <Input placeholder="Email"/>
-                <Input placeholder="Phone Number"/>
-               <Send>Send OTP</Send>
-                
+             <Input
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <Input
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Input
+              placeholder="Phone Number"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+            <Input
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+               <Send onClick={otpSent}>Send OTP</Send>
                   {
-                    OTP && (<>
+                    status && (<>
                       <Hr/>
-                        <Input placeholder="OTP"/>
-                        <Submit>Submit</Submit>
+                      <Input
+                        placeholder="OTP"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                      />
+                        <Submit onClick={submit}>Submit</Submit>
                     </>
                         
                     )
@@ -107,3 +170,4 @@ const register = () => {
 }
 
 export default register
+

@@ -6,6 +6,13 @@ import Bslider from '../Components/Bslider';
 import Switch from "react-switch";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Popup from '../Components/Popup';
+import Map from "../Components/Map"
+import {
+  withScriptjs,
+  withGoogleMap,
+  GoogleMap,
+  Marker,
+} from "react-google-maps";
 
 const Container = styled.div` 
 margin-top: 50px;
@@ -147,13 +154,34 @@ gap: 10px;
 cursor: pointer;
 `
 
-
 const Profile = () => {
 
-
+    const [img, setImg] = useState("https://img.freepik.com/free-icon/user_318-563642.jpg");
+    const [phone, setPhone] = useState("");
+    const [email, setEmail] = useState("");
     const [click,setClick] = useState(false);
     const [book,setBook] = useState(false);
-
+    const [location, setLocation] = useState(null);
+    const [weather, setWeather] = useState(null);
+  
+    function handleLocationClick() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(success, error);
+      } else {
+        console.log("Geolocation not supported");
+      }
+    }
+  
+    function success(position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      setLocation({ latitude, longitude });
+      console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+    }
+    function error() {
+      console.log("Unable to retrieve your location");
+    }
+    
   const  handleClick = () => setClick(!click);
 
   const handleBook = () => setBook(!book);
@@ -167,7 +195,7 @@ const Profile = () => {
 
     <Top>
  <Left>
-<Img src='https://img.freepik.com/free-icon/user_318-563642.jpg'/>
+<Img src={img}/>
 <Username>
 </Username>
  </Left>
@@ -201,10 +229,14 @@ Phone:
 +91 8160293185
 </Phone>
 <Address>
-<Span>
-Address:
-</Span>
-B-601 Shreeji Heights, Mira Road East, Thane, Maharashtra, 401107
+  <Span>
+  <div>
+        {!location ?  <button onClick={handleLocationClick}>Get Location</button> : null}
+
+        <Map/>
+
+  </div>
+  </Span>
 </Address>
 </Details>
 
