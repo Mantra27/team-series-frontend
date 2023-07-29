@@ -7,6 +7,7 @@ import Register from './Components/register'
 import {Routes, Route} from 'react-router-dom'
 import Home from './Pages/Home'
 import Cart from './Pages/Cart'
+import Profile from './Pages/Profile'
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
         <Route path="/register" element={<Register/>}/>
         <Route path='/' element={<Home/>}/>
         <Route path='/cart' element={<Cart/>}/>
+        <Route path='/profile' element={<Profile/>}/>
       </Routes>
    </div>
     </>
